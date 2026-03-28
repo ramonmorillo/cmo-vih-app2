@@ -20,6 +20,10 @@ export function createUiState() {
     importType: 'json',
     savedCasesOpen: true,
     unsavedChanges: false,
+    flow: {
+      screen: 'welcome',
+      step: 1
+    },
     modals: {
       newCase: {
         open: false

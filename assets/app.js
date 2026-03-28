@@ -42,6 +42,7 @@ import { loadLocale, t } from './modules/i18n.js';
 import { renderApp } from './modules/ui.js';
 
 let state = createDefaultState();
+let processingTimeoutId = null;
 
 function recomputeAnalysis() {
   state.patientCase.toolVersion = APP_VERSION;
@@ -64,6 +65,15 @@ function persistAndRender() {
 function renderOnly() {
   recomputeAnalysis();
   render();
+}
+
+function setFlow(screen, step = state.ui?.flow?.step || 1) {
+  state = updateUi(state, {
+    flow: {
+      screen,
+      step
+    }
+  });
 }
 
 async function refreshSavedCases(error = null) {
@@ -207,6 +217,12 @@ async function startFreshCase(shouldSaveCurrentCase) {
 
   state = resetCase(state);
   state = markCaseClean(state);
+  state = updateUi(state, {
+    flow: {
+      screen: 'welcome',
+      step: 1
+    }
+  });
   state = saveState(state);
   await refreshSavedCases();
   render();
@@ -224,6 +240,47 @@ function handleNewCaseClick() {
   }
 
   startFreshCase(false);
+}
+
+function handleStartFlow() {
+  setFlow('wizard', 1);
+  persistAndRender();
+}
+
+function handleStepNavigation(targetStep) {
+  const step = Math.min(4, Math.max(1, Number(targetStep)));
+  const screen = step === 4 ? 'result' : 'wizard';
+  setFlow(screen, step);
+  persistAndRender();
+}
+
+function handleNextStep() {
+  const currentStep = state.ui?.flow?.step || 1;
+  if (currentStep < 3) {
+    handleStepNavigation(currentStep + 1);
+    return;
+  }
+  if (processingTimeoutId) {
+    clearTimeout(processingTimeoutId);
+  }
+  setFlow('processing', 4);
+  persistAndRender();
+  processingTimeoutId = window.setTimeout(() => {
+    setFlow('result', 4);
+    persistAndRender();
+  }, 900);
+}
+
+function handleBackStep() {
+  const currentStep = state.ui?.flow?.step || 1;
+  if (currentStep <= 1) return;
+  handleStepNavigation(currentStep - 1);
+}
+
+function handleStartNewEvaluation() {
+  state = resetCase(state, { preserveClinician: true });
+  setFlow('wizard', 1);
+  persistAndRender();
 }
 
 function exportSummary() {
@@ -359,6 +416,14 @@ function bindEvents() {
   document.getElementById('printBtn')?.addEventListener('click', printReport);
   document.getElementById('toolbarExportBtn')?.addEventListener('click', exportJson);
   document.getElementById('newCaseBtn')?.addEventListener('click', handleNewCaseClick);
+  document.getElementById('startFlowBtn')?.addEventListener('click', handleStartFlow);
+  document.getElementById('stepNextBtn')?.addEventListener('click', handleNextStep);
+  document.getElementById('stepBackBtn')?.addEventListener('click', handleBackStep);
+  document.getElementById('goToStep1')?.addEventListener('click', () => handleStepNavigation(1));
+  document.getElementById('goToStep2')?.addEventListener('click', () => handleStepNavigation(2));
+  document.getElementById('goToStep3')?.addEventListener('click', () => handleStepNavigation(3));
+  document.getElementById('goToStep4')?.addEventListener('click', () => handleStepNavigation(4));
+  document.getElementById('startNewEvalBtn')?.addEventListener('click', handleStartNewEvaluation);
   document.getElementById('toolbarSaveBtn')?.addEventListener('click', () => saveCurrentCase());
   document.getElementById('saveCurrentCaseBtn')?.addEventListener('click', () => saveCurrentCase());
   document.getElementById('saveAsNewCaseBtn')?.addEventListener('click', () => saveCurrentCase({ asNew: true }));
@@ -379,16 +444,6 @@ function bindEvents() {
   });
   document.getElementById('savedCaseIdSearch')?.addEventListener('input', handleSavedCasesFilterChange);
   document.getElementById('savedPatientSearch')?.addEventListener('input', handleSavedCasesFilterChange);
-  document.getElementById('savedCasesSort')?.addEventListener('change', handleSavedCasesFilterChange);
-  document.getElementById('savedCasesSection')?.addEventListener('toggle', (event) => {
-    state = updateUi(state, { savedCasesOpen: event.target.open });
-    state = saveState(state);
-  });
-  document.getElementById('toggleSavedCasesBtn')?.addEventListener('click', () => {
-    state = updateUi(state, { savedCasesOpen: !state.ui.savedCasesOpen });
-    state = saveState(state);
-    render();
-  });
   document.querySelector('.saved-cases-list')?.addEventListener('click', handleSavedCaseAction);
 }
 
@@ -402,6 +457,12 @@ async function init() {
     }
   });
   recomputeAnalysis();
+  state = updateUi(state, {
+    flow: {
+      screen: state.ui?.flow?.screen || 'welcome',
+      step: state.ui?.flow?.step || 1
+    }
+  });
   await refreshSavedCases();
   render();
 }
