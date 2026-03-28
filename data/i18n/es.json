@@ -338,5 +338,28 @@
     "updateMissing": "Este caso aún no se ha guardado. Utilice primero “Guardar caso” o “Guardar como caso nuevo”.",
     "copySuffix": "copia",
     "copyLabel": "Copia de {caseId}"
+  },
+  "flow": {
+    "welcomeEyebrow": "Demo para congreso · Flujo móvil",
+    "appTitle": "CMO-VIH Pro v2 Demo",
+    "welcomeSubtitle": "Estratificación farmacéutica VIH guiada, explicable y lista para demostración clínica.",
+    "start": "Iniciar evaluación",
+    "wizardTitle": "Evaluación guiada del paciente",
+    "wizardSubtitle": "Complete cada paso para mantener la lógica CMO y obtener una recomendación explicable.",
+    "step1": "Paso 1 · Datos básicos",
+    "step2": "Paso 2 · Datos clínicos",
+    "step3": "Paso 3 · Adherencia y contexto",
+    "step4": "Paso 4 · Resultado",
+    "overallProgress": "Progreso global",
+    "next": "Siguiente",
+    "back": "Atrás",
+    "compute": "Generar resultado",
+    "processingTitle": "Procesando estratificación clínica",
+    "processingSubtitle": "Ejecutando reglas determinísticas CMO-VIH y construyendo recomendaciones explicables.",
+    "resultEyebrow": "Evaluación completada",
+    "resultTitle": "Resumen del resultado clínico",
+    "interpretation": "Interpretación",
+    "startNew": "Iniciar nueva evaluación",
+    "advanced": "Herramientas avanzadas y gestión de casos"
   }
 }

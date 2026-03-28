@@ -338,5 +338,28 @@
     "updateMissing": "This case has not been saved before. Use “Save case” or “Save as new case” first.",
     "copySuffix": "copy",
     "copyLabel": "Copy of {caseId}"
+  },
+  "flow": {
+    "welcomeEyebrow": "Congress demo · Mobile workflow",
+    "appTitle": "CMO-VIH Pro v2 Demo",
+    "welcomeSubtitle": "Guided HIV pharmaceutical care stratification with explainable output for showcase and pilot discussions.",
+    "start": "Start evaluation",
+    "wizardTitle": "Guided patient evaluation",
+    "wizardSubtitle": "Complete each step to preserve deterministic CMO logic and produce an explainable recommendation.",
+    "step1": "Step 1 · Basics",
+    "step2": "Step 2 · Clinical data",
+    "step3": "Step 3 · Adherence & context",
+    "step4": "Step 4 · Result",
+    "overallProgress": "Overall completion",
+    "next": "Next",
+    "back": "Back",
+    "compute": "Generate result",
+    "processingTitle": "Processing clinical stratification",
+    "processingSubtitle": "Running deterministic CMO-VIH rules and assembling explainable recommendations.",
+    "resultEyebrow": "Evaluation complete",
+    "resultTitle": "Clinical result overview",
+    "interpretation": "Interpretation",
+    "startNew": "Start new evaluation",
+    "advanced": "Advanced tools and case management"
   }
 }
