@@ -1,7 +1,9 @@
 {
   "header": {
-    "eyebrow": "Sistema semiclínico de soporte a la decisión",
-    "subtitle": "Herramienta de soporte para atención farmacéutica del VIH, centrada en la privacidad, con estratificación explicable e ingesta asistida por IA.",
+    "productLine": "CMO-VIH Pro v2",
+    "systemName": "Clinical Decision Support System",
+    "subtext": "Estratificación farmacéutica basada en el modelo CMO en pacientes con VIH",
+    "footerLine": "Versión 2 — Abril 2026 · Creado por Ramón Morillo",
     "language": "Idioma"
   },
   "common": {
@@ -44,7 +46,14 @@
   },
   "decision": {
     "title": "Decisión clínica",
+    "patientLine": "Paciente de {priority} (Nivel {level})",
+    "basedOn": "Este resultado se basa en:",
     "priority": "Nivel de prioridad",
+    "profile": {
+      "label": "Perfil",
+      "stable": "Estable",
+      "complex": "Complejo"
+    },
     "followUp": "Recomendación de seguimiento",
     "intervention": {
       "label": "Intervención requerida",
