@@ -99,50 +99,47 @@ function renderDashboard(analysis) {
   `;
 }
 
-function getDecisionConfidence(analysis, level) {
-  if (!analysis) return 'low';
-  if (analysis.finalLevel !== analysis.automaticLevel) return 'low';
-
-  if (level === 1) return analysis.total >= 20 ? 'high' : 'medium';
-  if (level === 2) return analysis.total >= 9 && analysis.total <= 13 ? 'high' : 'medium';
-  return analysis.total <= 4 ? 'high' : 'medium';
+function getDecisionConfidence(completeness) {
+  const completion = Math.max(0, Math.min(100, Number(completeness || 0)));
+  if (completion >= 85) return 'high';
+  if (completion >= 60) return 'medium';
+  return 'low';
 }
 
-function renderClinicalDecision(analysis) {
+function renderDecisionDrivers(analysis) {
+  const topFactors = analysis?.explainability?.keyDrivers?.slice(0, 3) || [];
+  return `
+    <section class="decision-drivers" aria-label="${t('decision.basedOn')}">
+      <p class="decision-drivers__title">${t('decision.basedOn')}</p>
+      <ul class="decision-drivers__list">
+        ${topFactors.map((driver) => `<li>${driver.label}: ${driver.valueLabel}</li>`).join('') || `<li>${t('common.none')}</li>`}
+      </ul>
+    </section>
+  `;
+}
+
+function renderClinicalDecision(analysis, state) {
   if (!analysis) return '';
 
   const level = Number(analysis.finalLevel) || 3;
-  const confidence = getDecisionConfidence(analysis, level);
+  const totalFields = FIELD_DEFINITIONS.length;
+  const completedFields = FIELD_DEFINITIONS.filter((field) => state.patientCase.fields[field.id]?.value).length;
+  const completeness = computeCompletion(state.patientCase.fields);
+  const confidence = getDecisionConfidence(completeness);
   const interventionRequired = level === 1 || level === 2;
   const interventionKey = interventionRequired ? 'decision.intervention.required' : 'decision.intervention.notRequired';
+  const profile = level === 3 ? t('decision.profile.stable') : t('decision.profile.complex');
 
   return `
     <section class="clinical-decision clinical-decision--level-${level}" aria-label="${t('decision.title')}">
       <p class="clinical-decision__eyebrow">${t('decision.title')}</p>
-      <p class="clinical-decision__summary">${t(`decision.summary.level${level}`, {
-        priority: analysis.priorityLabel,
-        followUp: analysis.followUp,
-        intervention: t(interventionKey),
-        confidence: t(`decision.confidence.${confidence}`)
-      })}</p>
-      <div class="clinical-decision__meta">
-        <article>
-          <span>${t('decision.priority')}</span>
-          <strong>${analysis.priorityLabel}</strong>
-        </article>
-        <article>
-          <span>${t('decision.followUp')}</span>
-          <strong>${analysis.followUp}</strong>
-        </article>
-        <article>
-          <span>${t('decision.intervention.label')}</span>
-          <strong>${t(interventionKey)}</strong>
-        </article>
-        <article>
-          <span>${t('decision.confidence.label')}</span>
-          <strong>${t(`decision.confidence.${confidence}`)}</strong>
-        </article>
-      </div>
+      <p class="clinical-decision__summary">${t('decision.patientLine', { priority: analysis.priorityLabel, level })}</p>
+      <ul class="clinical-decision__bullets">
+        <li><strong>✔ ${t('decision.profile.label')}:</strong> ${profile}</li>
+        <li><strong>✔ ${t('decision.intervention.label')}:</strong> ${t(interventionKey)}</li>
+        <li><strong>✔ ${t('decision.followUp')}:</strong> ${analysis.followUp}</li>
+        <li><strong>✔ ${t('decision.confidence.label')}:</strong> ${t(`decision.confidence.${confidence}`)} (${completedFields}/${totalFields}; ${completeness}%)</li>
+      </ul>
     </section>
   `;
 }
@@ -309,7 +306,8 @@ function renderProcessing() {
 function renderResult(state) {
   const analysis = state.analysis;
   return `
-    ${renderClinicalDecision(analysis)}
+    ${renderClinicalDecision(analysis, state)}
+    ${renderDecisionDrivers(analysis)}
     <section class="result-hero">
       <p class="eyebrow">${t('flow.resultEyebrow')}</p>
       <h2>${t('flow.resultTitle')}</h2>
@@ -377,9 +375,10 @@ function renderWizard(state, uiHints = {}) {
   return `
     <header class="hero hero--compact">
       <div>
-        <p class="eyebrow">${t('header.eyebrow')}</p>
-        <h2>${t('flow.wizardTitle')}</h2>
-        <p class="hero__subtitle">${guidanceText || t('flow.wizardSubtitle')}</p>
+        <p class="eyebrow">${t('header.productLine')}</p>
+        <h2>${t('header.systemName')}</h2>
+        <p class="hero__subtitle">${t('header.subtext')}</p>
+        <p class="hero__microcopy">${t('header.footerLine')}</p>
       </div>
       <div class="hero__actions">
         <label class="locale-switcher">
@@ -401,6 +400,7 @@ function renderWizard(state, uiHints = {}) {
         <strong class="step-counter">${stepCounter}</strong>
         <div class="progress-bar"><span style="width:${currentStep === 4 ? 100 : stepCompletion}%"></span></div>
         <span class="supporting-text progress-subtle">${t('flow.stepCompletion', { percent: currentStep === 4 ? 100 : stepCompletion })}</span>
+        <span class="supporting-text progress-subtle">${guidanceText || t('flow.wizardSubtitle')}</span>
       </div>
     </section>
 

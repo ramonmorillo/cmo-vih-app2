@@ -1,7 +1,9 @@
 {
   "header": {
-    "eyebrow": "Semi-clinical decision-support system",
-    "subtitle": "Privacy-first HIV pharmaceutical care support tool for pilot clinical workflows, explainable scoring, and AI-assisted text intake.",
+    "productLine": "CMO-VIH Pro v2",
+    "systemName": "Clinical Decision Support System",
+    "subtext": "Pharmaceutical stratification based on the CMO model in people living with HIV",
+    "footerLine": "Version 2 — April 2026 · Created by Ramón Morillo",
     "language": "Language"
   },
   "common": {
@@ -44,7 +46,14 @@
   },
   "decision": {
     "title": "Clinical Decision",
+    "patientLine": "Patient with {priority} (Level {level})",
+    "basedOn": "This result is based on:",
     "priority": "Priority level",
+    "profile": {
+      "label": "Profile",
+      "stable": "Stable",
+      "complex": "Complex"
+    },
     "followUp": "Follow-up recommendation",
     "intervention": {
       "label": "Intervention required",

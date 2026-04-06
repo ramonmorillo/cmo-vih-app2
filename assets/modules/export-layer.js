@@ -76,6 +76,7 @@ export function buildPrintableHtml(state, analysis, translate) {
       </head>
       <body>
         <h1>${APP_VERSION}</h1>
+        <p class="muted"><strong>Clinical decision support output — Not a medical device</strong></p>
         <p class="muted">${translate('traceability.caseId')}: ${state.patientCase.caseId}</p>
         <p class="muted">${translate('savedCases.patientLabel')}: ${state.patientCase.pseudonymizedPatientLabel || translate('common.none')}</p>
         <p class="muted">${translate('exports.timestamp')}: ${analysis.traceability.timestamp}</p>
