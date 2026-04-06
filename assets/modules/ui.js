@@ -191,9 +191,14 @@ function renderStepContent(state, step) {
           <label>${t('settings.patientLabel')}
             <input id="patientLabel" value="${escapeHtml(state.patientCase.pseudonymizedPatientLabel || '')}" placeholder="${t('settings.patientLabelPlaceholder')}">
           </label>
-          <p class="supporting-text">${t('settings.patientLabelHelp')}</p>
-          <label>${t('settings.clinicianName')}<input id="clinicianName" value="${escapeHtml(state.patientCase.clinician.name || '')}" placeholder="${t('settings.clinicianNamePlaceholder')}"></label>
-          <label>${t('settings.centerName')}<input id="centerName" value="${escapeHtml(state.patientCase.clinician.center || '')}" placeholder="${t('settings.centerNamePlaceholder')}"></label>
+          <details class="optional-details">
+            <summary>${t('flow.optionalDetails')}</summary>
+            <div class="optional-details__body">
+              <p class="supporting-text">${t('settings.patientLabelHelp')}</p>
+              <label>${t('settings.clinicianName')}<input id="clinicianName" value="${escapeHtml(state.patientCase.clinician.name || '')}" placeholder="${t('settings.clinicianNamePlaceholder')}"></label>
+              <label>${t('settings.centerName')}<input id="centerName" value="${escapeHtml(state.patientCase.clinician.center || '')}" placeholder="${t('settings.centerNamePlaceholder')}"></label>
+            </div>
+          </details>
         </div>
       </section>
       ${STEP_SECTIONS[1].map((sectionId) => renderSection(sectionId, state)).join('')}
@@ -313,17 +318,19 @@ function renderNewCaseModal(state) {
   `;
 }
 
-function renderWizard(state) {
+function renderWizard(state, uiHints = {}) {
   const currentStep = state.ui?.flow?.step || 1;
   const stepCompletion = getStepProgress(state, currentStep);
-  const overallCompletion = computeCompletion(state.patientCase.fields);
+  const stepCounter = t('flow.stepCounter', { current: currentStep, total: 4 });
+  const guidanceText = t(`flow.stepGuidance${currentStep}`);
+  const showStepFeedback = currentStep < 4 && uiHints?.stepFeedback?.title;
 
   return `
     <header class="hero hero--compact">
       <div>
         <p class="eyebrow">${t('header.eyebrow')}</p>
         <h2>${t('flow.wizardTitle')}</h2>
-        <p class="hero__subtitle">${t('flow.wizardSubtitle')}</p>
+        <p class="hero__subtitle">${guidanceText || t('flow.wizardSubtitle')}</p>
       </div>
       <div class="hero__actions">
         <label class="locale-switcher">
@@ -342,11 +349,18 @@ function renderWizard(state) {
         ${[1, 2, 3, 4].map((step) => `<button id="goToStep${step}" class="step-chip ${step === currentStep ? 'step-chip--active' : ''}">${t(`flow.step${step}`)}</button>`).join('')}
       </div>
       <div class="progress-right">
+        <strong class="step-counter">${stepCounter}</strong>
         <div class="progress-bar"><span style="width:${currentStep === 4 ? 100 : stepCompletion}%"></span></div>
-        <strong>${currentStep === 4 ? 100 : stepCompletion}%</strong>
+        <span class="supporting-text progress-subtle">${t('flow.stepCompletion', { percent: currentStep === 4 ? 100 : stepCompletion })}</span>
       </div>
-      <p class="supporting-text">${t('flow.overallProgress')}: ${overallCompletion}%</p>
     </section>
+
+    ${showStepFeedback ? `
+      <section class="step-feedback" role="status" aria-live="polite">
+        <strong>${uiHints.stepFeedback.title}</strong>
+        ${uiHints.stepFeedback.subtitle ? `<span>${uiHints.stepFeedback.subtitle}</span>` : ''}
+      </section>
+    ` : ''}
 
     ${currentStep < 4 ? `<main class="step-layout">${renderStepContent(state, currentStep)}</main>` : renderResult(state)}
 
@@ -354,7 +368,7 @@ function renderWizard(state) {
       <nav class="sticky-nav">
         <button id="newCaseBtn" class="button-ghost">${t('buttons.newCase')}</button>
         <button id="stepBackBtn" class="button-secondary" ${currentStep === 1 ? 'disabled' : ''}>${t('flow.back')}</button>
-        <button id="stepNextBtn">${currentStep === 3 ? t('flow.compute') : t('flow.next')}</button>
+        <button id="stepNextBtn" class="button-primary sticky-nav__primary">${currentStep === 3 ? t('flow.compute') : t('flow.next')}</button>
       </nav>
     ` : ''}
 
@@ -384,14 +398,14 @@ function renderWizard(state) {
   `;
 }
 
-export function renderApp(state) {
+export function renderApp(state, uiHints = {}) {
   document.title = APP_VERSION;
   const screen = state.ui?.flow?.screen || 'welcome';
   document.getElementById('app').innerHTML = `
     <div class="app-shell app-shell--flow">
       ${screen === 'welcome' ? renderWelcomeScreen(state) : ''}
       ${screen === 'processing' ? renderProcessing() : ''}
-      ${screen === 'wizard' || screen === 'result' ? renderWizard(state) : ''}
+      ${screen === 'wizard' || screen === 'result' ? renderWizard(state, uiHints) : ''}
       ${renderFoundationSection()}
       ${renderNewCaseModal(state)}
     </div>

@@ -89,6 +89,8 @@ textarea { min-height: 180px; resize: vertical; }
   gap: 16px;
 }
 .progress-right { display: flex; align-items: center; gap: 12px; min-width: 280px; }
+.step-counter { white-space: nowrap; font-size: 0.95rem; color: var(--text); }
+.progress-subtle { white-space: nowrap; font-size: 0.82rem; }
 .progress-bar {
   flex: 1;
   height: 12px;
@@ -677,6 +679,41 @@ details.section-card summary::-webkit-details-marker { display: none; }
   padding: 14px;
 }
 
+.optional-details {
+  border: 1px dashed var(--line);
+  border-radius: 14px;
+  background: #fbfcfe;
+}
+
+.optional-details summary {
+  cursor: pointer;
+  padding: 0.75rem 0.9rem;
+  font-weight: 600;
+  color: var(--muted);
+}
+
+.optional-details__body {
+  display: grid;
+  gap: 10px;
+  padding: 0 0.9rem 0.9rem;
+}
+
+.step-feedback {
+  border: 1px solid rgba(15, 118, 110, 0.24);
+  background: rgba(15, 118, 110, 0.08);
+  color: #0f4f4a;
+  border-radius: 14px;
+  padding: 10px 12px;
+  display: grid;
+  gap: 3px;
+  font-size: 0.92rem;
+}
+
+.step-feedback span {
+  color: #145b55;
+  font-size: 0.85rem;
+}
+
 .processing-card {
   text-align: center;
   justify-items: center;
@@ -711,13 +748,21 @@ details.section-card summary::-webkit-details-marker { display: none; }
   z-index: 20;
   display: grid;
   grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 8px;
-  padding: 10px;
+  gap: 10px;
+  padding: 12px;
   background: rgba(255, 255, 255, 0.95);
   backdrop-filter: blur(8px);
   border: 1px solid var(--line);
   border-radius: 18px;
   box-shadow: 0 8px 26px rgba(15, 23, 42, 0.12);
+}
+
+.sticky-nav button {
+  min-height: 46px;
+}
+
+.sticky-nav__primary {
+  box-shadow: 0 10px 20px rgba(139, 30, 63, 0.26);
 }
 
 .sticky-nav button:disabled {
@@ -737,5 +782,25 @@ details.section-card summary::-webkit-details-marker { display: none; }
 
   .button-large {
     max-width: 360px;
+  }
+}
+
+@media (max-width: 520px) {
+  #app {
+    padding: 16px;
+  }
+
+  .hero--compact {
+    padding: 16px;
+  }
+
+  .progress-right {
+    display: grid;
+    min-width: 0;
+    gap: 8px;
+  }
+
+  .sticky-nav {
+    bottom: 6px;
   }
 }
