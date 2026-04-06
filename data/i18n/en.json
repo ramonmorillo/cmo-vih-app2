@@ -42,6 +42,27 @@
     "summaryPanel": "Summary panel",
     "suggestedInterventions": "Suggested interventions"
   },
+  "decision": {
+    "title": "Clinical Decision",
+    "priority": "Priority level",
+    "followUp": "Follow-up recommendation",
+    "intervention": {
+      "label": "Intervention required",
+      "required": "Yes",
+      "notRequired": "No"
+    },
+    "confidence": {
+      "label": "Confidence level",
+      "low": "Low",
+      "medium": "Medium",
+      "high": "High"
+    },
+    "summary": {
+      "level1": "{priority}: immediate high-intensity action is required with {followUp}; intervention required: {intervention}; confidence: {confidence}.",
+      "level2": "{priority}: moderate-risk case that needs proactive follow-up ({followUp}); intervention required: {intervention}; confidence: {confidence}.",
+      "level3": "{priority}: stable profile suitable for routine follow-up ({followUp}); intervention required: {intervention}; confidence: {confidence}."
+    }
+  },
   "inputs": {
     "manualSection": "Manual structured input",
     "textSection": "Paste clinical text",

@@ -99,6 +99,54 @@ function renderDashboard(analysis) {
   `;
 }
 
+function getDecisionConfidence(analysis, level) {
+  if (!analysis) return 'low';
+  if (analysis.finalLevel !== analysis.automaticLevel) return 'low';
+
+  if (level === 1) return analysis.total >= 20 ? 'high' : 'medium';
+  if (level === 2) return analysis.total >= 9 && analysis.total <= 13 ? 'high' : 'medium';
+  return analysis.total <= 4 ? 'high' : 'medium';
+}
+
+function renderClinicalDecision(analysis) {
+  if (!analysis) return '';
+
+  const level = Number(analysis.finalLevel) || 3;
+  const confidence = getDecisionConfidence(analysis, level);
+  const interventionRequired = level === 1 || level === 2;
+  const interventionKey = interventionRequired ? 'decision.intervention.required' : 'decision.intervention.notRequired';
+
+  return `
+    <section class="clinical-decision clinical-decision--level-${level}" aria-label="${t('decision.title')}">
+      <p class="clinical-decision__eyebrow">${t('decision.title')}</p>
+      <p class="clinical-decision__summary">${t(`decision.summary.level${level}`, {
+        priority: analysis.priorityLabel,
+        followUp: analysis.followUp,
+        intervention: t(interventionKey),
+        confidence: t(`decision.confidence.${confidence}`)
+      })}</p>
+      <div class="clinical-decision__meta">
+        <article>
+          <span>${t('decision.priority')}</span>
+          <strong>${analysis.priorityLabel}</strong>
+        </article>
+        <article>
+          <span>${t('decision.followUp')}</span>
+          <strong>${analysis.followUp}</strong>
+        </article>
+        <article>
+          <span>${t('decision.intervention.label')}</span>
+          <strong>${t(interventionKey)}</strong>
+        </article>
+        <article>
+          <span>${t('decision.confidence.label')}</span>
+          <strong>${t(`decision.confidence.${confidence}`)}</strong>
+        </article>
+      </div>
+    </section>
+  `;
+}
+
 function renderTraceability(state, analysis) {
   const traceability = analysis?.traceability || {
     timestamp: state.patientCase.traceability.updatedAt,
@@ -261,6 +309,7 @@ function renderProcessing() {
 function renderResult(state) {
   const analysis = state.analysis;
   return `
+    ${renderClinicalDecision(analysis)}
     <section class="result-hero">
       <p class="eyebrow">${t('flow.resultEyebrow')}</p>
       <h2>${t('flow.resultTitle')}</h2>

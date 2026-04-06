@@ -738,6 +738,70 @@ details.section-card summary::-webkit-details-marker { display: none; }
   gap: 14px;
 }
 
+.clinical-decision {
+  border-radius: 24px;
+  border: 2px solid transparent;
+  padding: 24px;
+  display: grid;
+  gap: 16px;
+  box-shadow: 0 18px 42px rgba(15, 23, 42, 0.25);
+  color: #fff;
+}
+
+.clinical-decision__eyebrow {
+  margin: 0;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  font-weight: 700;
+  font-size: 0.78rem;
+  opacity: 0.92;
+}
+
+.clinical-decision__summary {
+  margin: 0;
+  font-size: clamp(1.05rem, 2.8vw, 1.4rem);
+  line-height: 1.45;
+  font-weight: 700;
+}
+
+.clinical-decision__meta {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(170px, 1fr));
+  gap: 10px;
+}
+
+.clinical-decision__meta article {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.17);
+  padding: 10px 12px;
+  display: grid;
+  gap: 4px;
+}
+
+.clinical-decision__meta span {
+  font-size: 0.78rem;
+  opacity: 0.9;
+}
+
+.clinical-decision__meta strong {
+  font-size: 0.95rem;
+}
+
+.clinical-decision--level-1 {
+  background: linear-gradient(135deg, #b91c1c, #7f1d1d);
+  border-color: rgba(254, 202, 202, 0.55);
+}
+
+.clinical-decision--level-2 {
+  background: linear-gradient(135deg, #f97316, #c2410c);
+  border-color: rgba(254, 215, 170, 0.6);
+}
+
+.clinical-decision--level-3 {
+  background: linear-gradient(135deg, #16a34a, #166534);
+  border-color: rgba(187, 247, 208, 0.65);
+}
+
 .advanced-grid {
   padding: 16px;
 }
