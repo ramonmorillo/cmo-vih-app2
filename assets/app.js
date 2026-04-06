@@ -43,6 +43,8 @@ import { renderApp } from './modules/ui.js';
 
 let state = createDefaultState();
 let processingTimeoutId = null;
+let stepFeedback = null;
+let stepFeedbackTimeoutId = null;
 
 function recomputeAnalysis() {
   state.patientCase.toolVersion = APP_VERSION;
@@ -52,7 +54,7 @@ function recomputeAnalysis() {
 }
 
 function render() {
-  renderApp(state);
+  renderApp(state, { stepFeedback });
   bindEvents();
 }
 
@@ -248,8 +250,28 @@ function handleStartFlow() {
 }
 
 function handleStepNavigation(targetStep) {
+  const previousStep = state.ui?.flow?.step || 1;
   const step = Math.min(4, Math.max(1, Number(targetStep)));
   const screen = step === 4 ? 'result' : 'wizard';
+
+  if (stepFeedbackTimeoutId) {
+    clearTimeout(stepFeedbackTimeoutId);
+    stepFeedbackTimeoutId = null;
+  }
+  if (step > previousStep && previousStep >= 1 && previousStep <= 3 && screen === 'wizard') {
+    stepFeedback = {
+      title: t(`flow.step${previousStep}Completed`),
+      subtitle: t(`flow.step${step}Transition`)
+    };
+    stepFeedbackTimeoutId = window.setTimeout(() => {
+      stepFeedback = null;
+      stepFeedbackTimeoutId = null;
+      renderOnly();
+    }, 2200);
+  } else {
+    stepFeedback = null;
+  }
+
   setFlow(screen, step);
   persistAndRender();
 }
