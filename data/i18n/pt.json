@@ -42,6 +42,27 @@
     "summaryPanel": "Painel de resumo",
     "suggestedInterventions": "Intervenções sugeridas"
   },
+  "decision": {
+    "title": "Decisão clínica",
+    "priority": "Nível de prioridade",
+    "followUp": "Recomendação de acompanhamento",
+    "intervention": {
+      "label": "Intervenção necessária",
+      "required": "Sim",
+      "notRequired": "Não"
+    },
+    "confidence": {
+      "label": "Nível de confiança",
+      "low": "Baixa",
+      "medium": "Média",
+      "high": "Alta"
+    },
+    "summary": {
+      "level1": "{priority}: ação imediata e intensiva é necessária com {followUp}; intervenção necessária: {intervention}; confiança: {confidence}.",
+      "level2": "{priority}: caso de risco moderado que precisa de acompanhamento proativo ({followUp}); intervenção necessária: {intervention}; confiança: {confidence}.",
+      "level3": "{priority}: perfil estável adequado para acompanhamento de rotina ({followUp}); intervenção necessária: {intervention}; confiança: {confidence}."
+    }
+  },
   "inputs": {
     "manualSection": "Entrada estruturada manual",
     "textSection": "Colar texto clínico",
